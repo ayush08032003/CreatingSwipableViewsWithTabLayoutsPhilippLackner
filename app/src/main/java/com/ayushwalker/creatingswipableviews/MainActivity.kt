@@ -2,7 +2,10 @@ package com.ayushwalker.creatingswipableviews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,12 +25,25 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(images)
         viewPager.adapter = adapter
 
-        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL // This is when you want to change the swipe orientation, by de default, it is horizontal
+        // This will connect out tabLayout with our ViewPager 2
+        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+        TabLayoutMediator(tabLayout,viewPager){tab, position ->
+            tab.text =  "Tab ${position + 1}"
+        }.attach()
 
-        // For making the fake drag animation
-        viewPager.beginFakeDrag()
-        viewPager.fakeDragBy(-7f)
-        viewPager.endFakeDrag()
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                Toast.makeText(this@MainActivity, "Selected ${tab?.text}", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                Toast.makeText(this@MainActivity, "UnSelected ${tab?.text}", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                Toast.makeText(this@MainActivity, "ReSelected ${tab?.text}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
 
@@ -38,4 +54,9 @@ NOTES/ STEPS :-
 3. Since it works on RecyclerView Adapter, we need to create a RecyclerViewAdapter Class (we named it as  ViewPagerAdapter )
 4. Now add images Id as the list.
 5. Now you are good to go..
+
+Now If you want to add Tabs for images in the Swipable Menu, we need to do additonal process..
+1. Add TabLayout in the activity_main.xml, also, change the ConstraintLayout into LinearLayout, as it is difficult to adjust the TabLayout in ConstraintLayout
+2. Now Add TabLayoutMediator which will provide the way to merge imageview and tabs.
+3. Also, addOnTabSelectedListener , this function acts as click listeners for the tabs.. !!
  */
